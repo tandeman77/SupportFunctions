@@ -1,4 +1,4 @@
-
+'===================================================================================================='
 Public Function countDataRow(sheetName)
     'count how many rows of data there are in the active sheet
     Dim ws As Worksheet
@@ -12,7 +12,7 @@ Public Function countDataRow(sheetName)
     
     countDataRow = i
 End Function
-
+'===================================================================================================='
 Function getCorrectDate(dateText)
     Dim output As String
     Dim holder As Variant
@@ -26,7 +26,7 @@ Function getCorrectDate(dateText)
     
     getCorrectDate = output
 End Function
-
+'===================================================================================================='
 Function TransformArrayForExcelSheet(inputArray As Variant)
     'get a 1d array ready to be transferred back to a spreadsheet
     Dim output As Variant
@@ -40,7 +40,7 @@ Function TransformArrayForExcelSheet(inputArray As Variant)
     TransformArrayForExcelSheet = output
 
 End Function
-
+'===================================================================================================='
 Function TransformArrayForExcelSheetWithStartingPoint(inputArray As Variant, startingIndex As Integer) As Variant
     'get a 1d array ready to be transferred back to a spreadsheet
     Dim output As Variant
@@ -56,7 +56,7 @@ Function TransformArrayForExcelSheetWithStartingPoint(inputArray As Variant, sta
 
 End Function
 
-
+'===================================================================================================='
 Sub pasteArrayToSheet(outputArray As Variant, Sheet As String, columnNo, startingRow As Integer)
     'array needs to be 2 dimensional already
 
@@ -69,7 +69,7 @@ Sub pasteArrayToSheet(outputArray As Variant, Sheet As String, columnNo, startin
     'columnNo = UBound(outputArray, 2)
     ws.Range(startColumn & startingRow & ":" & endColumn & UBound(outputArray) + startingRow - 1) = outputArray
 End Sub
-
+'===================================================================================================='
 Function Number2Letter(number As Variant) As String
     'PURPOSE: Convert a given number into it's corresponding Letter Reference
     'SOURCE: www.TheSpreadsheetGuru.com/the-code-vault
@@ -77,7 +77,7 @@ Function Number2Letter(number As Variant) As String
     Number2Letter = Split(Cells(1, number).Address, "$")(1)
   
 End Function
-
+'===================================================================================================='
 Sub Letter2Number()
 'PURPOSE: Convert a given letter into it's corresponding Numeric Reference
 'SOURCE: www.TheSpreadsheetGuru.com/the-code-vault
@@ -95,6 +95,8 @@ Dim ColumnLetter As String
   MsgBox "Column " & ColumnLetter & " = Column " & ColumnNumber
     
 End Sub
+
+'===================================================================================================='
 Function IsInArray2d(stringToBeFound, arr As Variant) As Boolean
     Dim i
     For i = LBound(arr) To UBound(arr)
@@ -104,7 +106,7 @@ Function IsInArray2d(stringToBeFound, arr As Variant) As Boolean
         End If
     Next i
     IsInArray2d = False
-
+'===================================================================================================='
 End Function
 Sub removePunctuationFromSelection()
     Dim inputValues As Variant
@@ -124,7 +126,7 @@ Sub removePunctuationFromSelection()
     Next i
     
 End Sub
-
+'===================================================================================================='
 Function removePunctuations(text As String) As String
     Dim punctuations As Object
     Set punctuations = CreateObject("vbscript.regexp")
@@ -135,7 +137,7 @@ Function removePunctuations(text As String) As String
     removePunctuations = punctuations.Replace(text, "")
 End Function
 
-
+'===================================================================================================='
 Function IsInArray(stringToBeFound, arr As Variant) As Boolean
     Dim i As Long
     On Error GoTo emptyArray
@@ -149,7 +151,7 @@ Function IsInArray(stringToBeFound, arr As Variant) As Boolean
 emptyArray:
     IsInArray = False
 End Function
-
+'===================================================================================================='
 
 Function removePunctuations2(textInput As String)
     Dim i As Integer
@@ -169,7 +171,7 @@ Function removePunctuations2(textInput As String)
     removePunctuations = Trim(Join(processString, " "))
     
 End Function
-
+'===================================================================================================='
 Function RemovePlurals(text As String) As String
     Dim RE As Object
     Set RE = CreateObject("vbscript.regexp")
@@ -178,10 +180,12 @@ Function RemovePlurals(text As String) As String
     RE.IgnoreCase = True
     RemovePlurals = RE.Replace(text, "")
 End Function
-
+'===================================================================================================='
 Function trimText(text As String) As String
     trimText = Trim(text)
 End Function
+
+'===================================================================================================='
 Function trimtextinarray(inputArray As Variant) As Variant
     Dim i
     i = 0
@@ -192,7 +196,7 @@ Function trimtextinarray(inputArray As Variant) As Variant
     Next i
     trimtextinarray = output
 End Function
-
+'===================================================================================================='
 Function isIgnored(text As String, ignoreList As Variant) As Boolean
     'check if a word is a punctuation
     Dim i As Integer
@@ -203,7 +207,7 @@ Function isIgnored(text As String, ignoreList As Variant) As Boolean
         End If
     Next i
 End Function
-
+'===================================================================================================='
 Function getUniqueValuesFromRange(inputArray As Variant) As Variant
     Dim i As Long
     Dim output As Variant
@@ -214,7 +218,7 @@ Function getUniqueValuesFromRange(inputArray As Variant) As Variant
     Next i
     getUniqueValuesFromRange = output
 End Function
-
+'===================================================================================================='
 Function push1D(value As Variant, outputArray As Variant, defaultSecondDimension As Integer) As Variant
     On Error GoTo emptyArray
         Select Case defaultSecondDimension
@@ -245,7 +249,7 @@ emptyArray:
     End Select
     push1D = outputArray
 End Function
-
+'===================================================================================================='
 Public Sub QuickSortArray(ByRef SortArray As Variant, Optional lngMin As Long = -1, Optional lngMax As Long = -1, Optional lngColumn As Long = 0)
     On Error Resume Next
 
@@ -339,7 +343,7 @@ Public Sub QuickSortArray(ByRef SortArray As Variant, Optional lngMin As Long = 
     If (i < lngMax) Then Call QuickSortArray(SortArray, i, lngMax, lngColumn)
 
 End Sub
-
+'===================================================================================================='
 Public Sub QuickSort(vArray As Variant, inLow As Long, inHi As Long)
   'inlow and inhi are the boundaries of the array. you can use lbound and ubound for simplicity.
   Dim pivot   As Variant
@@ -391,3 +395,488 @@ dim component as variant
 for each component in locAddress
     
 next component
+
+'===================================================================================================='
+'border for rows and columns
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+If Target.Cells.Count > 1 Then Exit Sub
+Application.ScreenUpdating = False
+'Clear all cell colours
+Cells.Borders.LineStyle = xlNone
+
+With Target.EntireRow.Borders(xlEdgeTop)
+'Row and column highlightingfor the active cell
+.LineStyle = xlEdgeBottom
+.Weight = xlMedium
+.Color = -16776961
+End With
+
+    With Target.EntireColumn.Borders(xlEdgeTop)
+.LineStyle = xlEdgeBottom
+.Weight = xlMedium
+.Color = -16776961
+    End With
+
+    With Target.EntireRow.Borders(xlEdgeBottom)
+    'Row and column highlightingfor the active cell
+    .LineStyle = xlEdgeBottom
+    .Weight = xlMedium
+    .Color = -16776961
+    End With
+
+    With Target.EntireColumn.Borders(xlEdgeBottom)
+    .LineStyle = xlEdgeBottom
+    .Weight = xlMedium
+    .Color = -16776961
+    End With
+
+    With Target.EntireRow.Borders(xlEdgeRight)
+    'Row and column highlightingfor the active cell
+    .LineStyle = xlEdgeBottom
+    .Weight = xlMedium
+    .Color = -16776961
+    End With
+
+    With Target.EntireColumn.Borders(xlEdgeRight)
+    .LineStyle = xlEdgeBottom
+    .Weight = xlMedium
+    .Color = -16776961
+    End With
+
+    With Target.EntireRow.Borders(xlEdgeLeft)
+    'Row and column highlightingfor the active cell
+    .LineStyle = xlEdgeBottom
+    .Weight = xlMedium
+    .Color = -16776961
+    End With
+
+    With Target.EntireColumn.Borders(xlEdgeLeft)
+    .LineStyle = xlEdgeBottom
+    .Weight = xlMedium
+    .Color = -16776961
+    End With
+
+Application.ScreenUpdating = True
+End Sub
+
+'===================================================================================================='
+Sub copyAndPasteFormatingToARange()
+' copyAndPasteFormatingToARange Macro
+    MsgBox ("this is how it works. 1. input the range you're copying from. 2. input the range you're pasting too(enter only the first cell of each range)")
+    Application.EnableEvents = False
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+    Application.DisplayAlerts = False
+
+    Dim inputRange As String
+    inputRange = InputBox("Type in the cells to copy from in a range. Eg. A1:C1")
+
+    Dim originalRange As Range
+    Set originalRange = ActiveSheet.Range(inputRange)
+    originalRange.Select
+    Selection.Copy
+
+
+    Dim pasteRange As Range
+    inputRange = InputBox("type in the range you need to paste to. e.g. C2:C10")
+    Set pasteRange = ActiveSheet.Range(inputRange)
+    Dim i As Variant
+
+    For Each i In pasteRange
+        i.Select
+        Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, _
+            SkipBlanks:=False, Transpose:=False
+    Next i
+    Application.EnableEvents = True
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+    Application.DisplayAlerts = True
+End Sub
+
+'===================================================================================================='
+'optionsation setting for macro
+Sub macroOptimisationToggle()
+    If Application.EnableEvents Then
+        Application.EnableEvents = False
+        Application.ScreenUpdating = False
+        Application.Calculation = xlCalculationManual
+        Application.DisplayAlerts = False
+    Else
+        Application.EnableEvents = True
+        Application.ScreenUpdating = True
+        Application.Calculation = xlCalculationAutomatic
+        Application.DisplayAlerts = True
+    End If
+End Sub
+
+'===================================================================================================='
+
+Sub MergeCells()
+' MergeCells Macro
+' Keyboard Shortcut: Ctrl+Shift+M
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Selection.Merge
+End Sub
+
+'===================================================================================================='
+Sub MergeCellsInARange()
+'
+' MergeCellsInARange Macro
+'
+
+'
+Dim rng As Range
+Set rng = Selection
+Stop
+rng.FormulaR1C1Local(1).Select
+Selection.Merge
+Stop
+    Range("C169:E169").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Selection.Merge
+    Range("C170:E170").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Selection.Merge
+    Range("C171:E171").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Selection.Merge
+    Range("C172:E172").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Selection.Merge
+End Sub
+
+'===================================================================================================='
+Sub modifyTextInARange()
+    'adjust all strings in a range to have proper capitalisation
+    ' can only do 1 column at a time
+    '============================================================================================================================
+    'save first just in case.
+    Application.ActiveWorkbook.Save
+    '============================================================================================================================
+    'get variables ready for maco
+    Dim userInput As String
+    userInput = InputBox("what do you want to do?" & vbNewLine & _
+    "input 1 for proper text" & vbNewLine & _
+    "input 2 to trim text" & vbNewLine & _
+    "input 3 for lower case text" & vbNewLine & _
+    "input 4 for UPPER CASE text" & vbNewLine & _
+    "input 5 append(front) something to the existing text" & vbNewLine & _
+    "input 6 append(back) something to the existing text" & vbNewLine & _
+    "input 7 for highlight above/below average value" & vbNewLine & _
+    "input 8 for highlight value higher/lower than a specific number")
+
+    Dim inputRange As Variant
+    inputRange = Selection
+    Dim output As Variant
+    ReDim output(1 To UBound(inputRange), 1 To 1)
+    Dim i As Variant
+    Dim j As Long
+    j = 1
+    Dim compareDecision As String
+    Dim selectionCol As Integer
+    selectionCol = Selection.Column
+    Dim highlightColour As String
+    Dim checkValue As Variant
+    '============================================================================================================================
+    Select Case userInput
+        '========================================
+        Case 1
+            For Each i In inputRange
+                output(j, 1) = Application.WorksheetFunction.Proper(i)
+                j = j + 1
+            Next i
+        '========================================
+        Case 2
+            For Each i In inputRange
+                output(j, 1) = Application.WorksheetFunction.Trim(i)
+                j = j + 1
+            Next i
+        '========================================
+        Case 3
+            For Each i In inputRange
+                output(j, 1) = LCase(i)
+                j = j + 1
+            Next i
+        '========================================
+        Case 4
+            For Each i In inputRange
+                output(j, 1) = UCase(i)
+                j = j + 1
+            Next i
+        '========================================
+        Case 5
+            Dim text As String
+            text = InputBox("what text to append")
+            For Each i In inputRange
+                output(j, 1) = text & i
+                j = j + 1
+            Next i
+        '========================================
+        Case 6
+            Dim text1 As String
+            text = InputBox("what text to append")
+            For Each i In inputRange
+                output(j, 1) = i & text1
+                j = j + 1
+            Next i
+        '========================================
+        Case 7
+            ' highlight cells with above/below average value.
+            Dim average As Variant
+            average = Application.WorksheetFunction.average(inputRange)
+            compareDecision = InputBox("input 1 to highlight above average and 2 for below average")
+            j = Selection.Row
+            highlightColour = InputBox("choose from:" & vbNewLine & "1 = red" & vbNewLine & "2 = yellow" & vbNewLine & "3 = green")
+            For Each i In inputRange
+                Select Case compareDecision
+                    Case 1
+                        If i > average Then
+                            Select Case highlightColour
+                                Case 1
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 255
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 2
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 65535
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 3
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 5287936
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                            End Select
+                        End If
+                    Case 2
+                        If i < average Then
+                            Select Case highlightColour
+                                Case 1
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 255
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 2
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 65535
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 3
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 5287936
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                            End Select
+                        End If
+                End Select
+                j = j + 1
+            Next i
+            Exit Sub
+        '========================================
+        Case 8
+            ' highlight cells with above/below a specific value.
+            compareDecision = InputBox("input 1 to highlight higher values and 2 to highlight lower values")
+            checkValue = InputBox("what is the value?")
+            j = Selection.Row
+            highlightColour = InputBox("choose from:" & vbNewLine & "1 = red" & vbNewLine & "2 = yellow" & vbNewLine & "3 = green")
+            For Each i In inputRange
+                Select Case compareDecision
+                    Case 1
+                        If i > Int(checkValue) Then
+                            Select Case highlightColour
+                                Case 1
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 255
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 2
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 65535
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 3
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 5287936
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                            End Select
+                        End If
+                    Case 2
+                        If i < Int(checkValue) Then
+                            Select Case highlightColour
+                                Case 1
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 255
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 2
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 65535
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                                Case 3
+                                    ActiveSheet.Cells(j, selectionCol).Select
+                                    With Selection.Interior
+                                        .Pattern = xlSolid
+                                        .PatternColorIndex = xlAutomatic
+                                        .Color = 5287936
+                                        .TintAndShade = 0
+                                        .PatternTintAndShade = 0
+                                    End With
+                            End Select
+                        End If
+                End Select
+                j = j + 1
+            Next i
+            Exit Sub
+        '========================================
+        Case Else
+            MsgBox ("invalid input action")
+            Exit Sub
+    End Select
+    '============================================================================================================================
+    'write output
+    Selection = output
+    MsgBox ("script completed")
+End Sub
+
+
+'===================================================================================================='
+Sub removeKeywordsWithPlusSign()
+'
+' Keyword_adjustment_Monthly Macro
+'
+
+'
+    Cells.Find(What:="keyword", After:=ActiveCell, LookIn:=xlFormulas, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Selection.Replace What:="=", Replacement:="+", LookAt:=xlPart, _
+        SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
+        ReplaceFormat:=False
+    Selection.Replace What:="++", Replacement:="+", LookAt:=xlPart, _
+        SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
+        ReplaceFormat:=False
+End Sub
+
+'===================================================================================================='
+Sub RemoveAllHyperLinks()
+'
+' RemoveAllHyperlinks Macro
+'
+
+'
+    Cells.Select
+    Selection.Hyperlinks.Delete
+End Sub
+
+'===================================================================================================='
+Function removePlurals(text As String) As String
+    Dim final As String
+    Dim regex As Object
+    Set regex = CreateObject("vbscript.RegExp")
+    regex.Pattern = "(ies\b)|(es\b)|(s\b)"
+    regex.Global = True
+    regex.IgnoreCase = False
+
+    removePlurals = regex.Replace(text, "")
+
+End Function
+
+
+'===================================================================================================='
+'This is a code bracket to trigger macro when a document is saved.
+'put the code in "ThisWorkbook"
+
+Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+'Your Code Here
+End Sub
