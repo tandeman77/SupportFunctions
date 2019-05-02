@@ -1,12 +1,12 @@
 
 Public Function countDataRow(sheetName)
     'count how many rows of data there are in the active sheet
-    Dim Ws As Worksheet
-    Set Ws = Sheets(sheetName)
+    Dim ws As Worksheet
+    Set ws = Sheets(sheetName)
     Dim i As Integer
     i = 0
 
-    Do While Ws.Cells(i + 1, 1) <> ""
+    Do While ws.Cells(i + 1, 1) <> ""
         i = i + 1
     Loop
 
@@ -60,14 +60,14 @@ End Function
 Sub pasteArrayToSheet(outputArray As Variant, Sheet As String, columnNo, startingRow As Integer)
     'array needs to be 2 dimensional already
 
-    Dim Ws As Worksheet
-    Set Ws = Sheets(Sheet)
+    Dim ws As Worksheet
+    Set ws = Sheets(Sheet)
     Dim startColumn, endColumn As Variant
     startColumn = Number2Letter(columnNo)
 
     endColumn = Number2Letter(columnNo + UBound(outputArray, 2) - 1)
     'columnNo = UBound(outputArray, 2)
-    Ws.range(startColumn & startingRow & ":" & endColumn & UBound(outputArray) + startingRow - 1) = outputArray
+    ws.Range(startColumn & startingRow & ":" & endColumn & UBound(outputArray) + startingRow - 1) = outputArray
 End Sub
 
 Function Number2Letter(number As Variant) As String
@@ -89,7 +89,7 @@ Dim ColumnLetter As String
   ColumnLetter = "AG"
 
 'Convert To Column Number
-   ColumnNumber = range(ColumnLetter & 1).Column
+   ColumnNumber = Range(ColumnLetter & 1).Column
 
 'Display Result
   MsgBox "Column " & ColumnLetter & " = Column " & ColumnNumber
@@ -130,7 +130,7 @@ Function removePunctuations(text As String) As String
     Set punctuations = CreateObject("vbscript.regexp")
     punctuations.Pattern = "\b(for|at|on|in|is|to|are|the|of|an|a)\b"
     punctuations.Global = True
-    punctuations.ignorecase = True
+    punctuations.IgnoreCase = True
     punctuations.MultiLine = True
     removePunctuations = punctuations.Replace(text, "")
 End Function
@@ -150,32 +150,12 @@ emptyArray:
     IsInArray = False
 End Function
 
-
-Function removePunctuations2(textInput As String)
-    Dim i As Integer
-    i = 0
-    Dim processString As Variant
-    processString = Split(text)
-    Dim punctuations As Variant
-    punctuations = Array("for", "on", "in", "is", "to", "are", "the", "a", "an", "of", "at")
-
-    For i = 0 To UBound(processString)
-        If UBound(processString) > 0 Then
-            If IsInArray(processString(i), punctuations) Then
-                processString(i) = ""
-            End If
-        End If
-    Next i
-    removePunctuations = Trim(Join(processString, " "))
-
-End Function
-
 Function RemovePlurals(text As String) As String
     Dim re As Object
     Set re = CreateObject("vbscript.regexp")
     re.Pattern = "(s\b|es\b|ies\b)"
     re.Global = True
-    re.ignorecase = True
+    re.IgnoreCase = True
     RemovePlurals = re.Replace(text, "")
 End Function
 
@@ -184,7 +164,7 @@ Function RemovePluralsWithExceptions(text As String) As String
     Set re = CreateObject("vbscript.regexp")
     re.Pattern = "(s\b|es\b|ies\b)"
     re.Global = True
-    re.ignorecase = True
+    re.IgnoreCase = True
     RemovePlurals = re.Replace(text, "")
 End Function
 
@@ -233,7 +213,7 @@ Function getUniqueValuesFromRange2d(inputArray As Variant) As Variant
             output = Push(inputArray(i), output, 1)
         End If
     Next i
-    getUniqueValuesFromRange = output
+    getUniqueValuesFromRange2d = output
 End Function
 
 Function Push(value As Variant, outputArray As Variant, defaultSecondDimension As Integer) As Variant
@@ -496,7 +476,7 @@ Function vbaTrim(textInput As String) As String
     Set re = CreateObject("vbscript.regexp")
     re.Pattern = "\s+"
     re.Global = True
-    re.ignorecase = True
+    re.IgnoreCase = True
     re.MultiLine = True
     vbaTrim = re.Replace(textInput, " ")
 
@@ -506,7 +486,7 @@ Function regexReplace(text, ReplaceString, replaceWith As String) As String
     Set re = CreateObject("vbscript.regexp")
     re.Pattern = ("\b(" & ReplaceString & ")\b")
     re.Global = True
-    re.ignorecase = True
+    re.IgnoreCase = True
     re.MultiLine = True
     regexReplace = re.Replace(text, replaceWith)
 End Function
@@ -517,7 +497,7 @@ Function cleanUpLeftoverS(text) As String
     Set re = CreateObject("vbscript.regexp")
     re.Pattern = "\W(s|ies|es|s)\b"
     re.Global = True
-    re.ignorecase = True
+    re.IgnoreCase = True
     re.MultiLine = True
     cleanUpLeftoverS = re.Replace(text, "")
 End Function
@@ -539,7 +519,7 @@ Function TrimArray(arrayInput() As Variant, col As Integer) As Variant
         If arrayInput(i, col) <> Empty Then
             count = count + 1
         Else
-            ReDim output(LBound(arrayInput) To count, LBound(arrayInput, 2) To UBound(arrayInput, 2))
+            ReDim output(LBound(arrayInput) To count - 1, LBound(arrayInput, 2) To UBound(arrayInput, 2))
             For j = LBound(output) To UBound(output)
                 For k = LBound(output, 2) To UBound(output, 2)
                     output(j, k) = arrayInput(j, k)
@@ -551,12 +531,30 @@ Function TrimArray(arrayInput() As Variant, col As Integer) As Variant
     Next i
 End Function
 
+Function trimArrayMultiD(inputarr As Variant, col As Integer) As Variant
+    Dim row, i As Long
+    Dim colc As Integer
+    Dim output As Variant
+    For i = LBound(inputarr) To UBound(inputarr)
+        If inputarr(i, col) = Empty Then
+            Exit For
+        End If
+    Next i
+    ReDim output(LBound(inputarr) To i - 1, LBound(inputarr, 2) To UBound(inputarr, 2))
+    For row = LBound(inputarr) To i - 1
+        For colc = LBound(inputarr, 2) To UBound(inputarr, 2)
+            output(row, colc) = inputarr(row, colc)
+        Next colc
+    Next row
+    trimArrayMultiD = output
+End Function
+
 Function regexExtract(text As String, regex As String) As String
     Dim re As Object
     Set re = CreateObject("vbscript.regexp")
     re.Pattern = regex
     re.Global = True
-    re.ignorecase = True
+    re.IgnoreCase = True
     re.MultiLine = True
     regexExtract = re.Execute(text)(0)
 End Function
@@ -570,7 +568,7 @@ Function AverageInArray1d(inputArray As Variant) As Double
     AverageInArray1d = total / (UBound(inputArray) - LBound(inputArray) + 1)
 End Function
 
-Function sortRangeAndConcat(rng As range) As String
+Function sortRangeAndConcat(rng As Range) As String
     Dim i As Variant
     Dim text As String
     For Each i In rng.value
@@ -580,3 +578,277 @@ Function sortRangeAndConcat(rng As range) As String
     Next i
     sortRangeAndConcat = text
 End Function
+
+Function indexOf(arr, value) As Long
+    'find the location of a value in an array
+    Dim val As Variant
+    Dim count As Long
+    count = LBound(arr)
+    For Each val In arr
+        If val = value Then
+            indexOf = count
+            Exit Function
+        End If
+        count = count + 1
+    Next val
+    indexOf = -1
+End Function
+
+Function indexOfInCol(arr, value, row) As Long
+    'find the location of a value in an array
+    Dim i As Integer
+    For i = LBound(arr, 2) To UBound(arr, 2)
+        If arr(row, i) = value Then
+            indexOfInCol = i
+            Exit Function
+        End If
+    Next i
+End Function
+
+Function AddToArrayWhereValueIsEmpty(arr, value, col) As Variant
+    'find an empty spot in an array and add a given value
+    Dim i As Long
+    For i = LBound(arr) To UBound(arr)
+        If arr(i, col) = Empty Then
+            arr(i, col) = value
+            AddToArrayWhereValueIsEmpty = arr
+            Exit Function
+        End If
+    Next i
+End Function
+
+Function invertArray(arr As Variant) As Variant
+    'invert array
+    Dim val As Variant
+    Dim i, count As Long
+    Dim j As Integer
+    Dim output As Variant
+    ReDim output(LBound(arr) To UBound(arr), LBound(arr, 2) To UBound(arr, 2))
+    count = UBound(arr)
+    For i = LBound(arr) To UBound(arr)
+        For j = LBound(arr, 2) To UBound(arr, 2)
+        output(i, j) = arr(count, j)
+        Next j
+        count = count - 1
+    Next i
+    invertArray = output
+End Function
+
+Function arrayLoading(newArr, oldArr As Variant, newCol As Integer, oldCol As Integer, redimTF As Boolean, Optional dimension As Integer) As Variant
+    Dim i As Long
+    If redimTF Then
+        ReDim newArr(LBound(oldArr) To UBound(oldArr), LBound(oldArr, 2) To LBound(oldArr, 2) + dimension)
+    End If
+    For i = LBound(oldArr) To UBound(oldArr)
+        newArr(i, newCol) = oldArr(i, oldCol)
+    Next i
+    arrayLoading = newCol
+End Function
+
+Function LoadMultiArrayTo1dArray(inputarr As Variant, outputArr As Variant, col As Integer, Optional startingIndex As Integer, Optional startingRow As Integer) As Variant
+    'get a column of a multidimensional array into 1d array.
+    'use startingrow if you have to skip a header row in the data or something like that.
+    ' startingindex is for the output array, e.g. starting the array at index 0 or 1.
+    Dim i, j, k As Long
+    If startingRow = Empty Then
+        k = 0
+    End If
+    If startingIndex = Empty Then
+        j = 0
+    End If
+    ReDim outputArr(UBound(inputarr) + startingIndex - startingRow - 1)
+    For i = LBound(inputarr) + k To UBound(inputarr)
+        outputArr(j) = inputarr(i, col)
+        j = j + 1
+    Next i
+    LoadMultiArrayTo1dArray = outputArr
+End Function
+
+Function BubbleSort2D(ByVal List As Variant, ByVal SortCol As Long, Optional ByVal SortColNumeric As Boolean = False, _
+Optional ByVal Order As XlSortOrder = xlAscending) As Variant
+' Sorts an array using bubble sort algorithm
+    Dim First As Integer, Last As Integer
+    Dim i As Integer, j As Integer, k As Long
+    Dim iColumn
+    Dim Temp
+    First = LBound(List, 1)
+    Last = UBound(List, 1)
+    iColumn = LBound(List, 2) + SortCol - 1
+    For i = First To Last - 1
+        For j = i + 1 To Last
+            If Order = xlAscending Then
+                If SortColNumeric Then
+                    If CDbl(List(i, iColumn)) > CDbl(List(j, iColumn)) Then
+                        For k = LBound(List, 2) To UBound(List, 2)
+                            Temp = List(j, k)
+                            List(j, k) = List(i, k)
+                            List(i, k) = Temp
+                        Next k
+                    End If
+                Else
+                    If List(i, iColumn) > List(j, iColumn) Then
+                        For k = LBound(List, 2) To UBound(List, 2)
+                            Temp = List(j, k)
+                            List(j, k) = List(i, k)
+                            List(i, k) = Temp
+                        Next k
+                    End If
+                End If
+            Else
+                If SortColNumeric Then
+                    If CDbl(List(i, iColumn)) < CDbl(List(j, iColumn)) Then
+                        For k = LBound(List, 2) To UBound(List, 2)
+                            Temp = List(j, k)
+                            List(j, k) = List(i, k)
+                            List(i, k) = Temp
+                        Next k
+                    End If
+                Else
+                    If List(i, iColumn) < List(j, iColumn) Then
+                        For k = LBound(List, 2) To UBound(List, 2)
+                            Temp = List(j, k)
+                            List(j, k) = List(i, k)
+                            List(i, k) = Temp
+                        Next k
+                    End If
+                End If
+            End If
+        Next j
+    Next i
+    BubbleSort2D = List
+End Function
+
+Function getRootKeyword(ByVal text As String) As String
+    getRootKeyword = Trim(Replace(text, "+", ""))
+End Function
+
+Function countValueInArray(arr, value, col) As Long
+    Dim count As Long
+    count = 0
+    Dim i As Long
+    For i = LBound(arr) To UBound(arr)
+        If LCase(arr(i, col)) = LCase(value) Then
+            count = count + 1
+        End If
+    Next i
+    countValueInArray = count
+End Function
+Function multipleRegexExtract(text As String, regexPattern As String) As Variant
+    Dim regex As New VBScript_RegExp_55.RegExp
+    Dim match As Variant
+    regex.Pattern = regexPattern
+    regex.Global = True
+    Set match = regex.Execute(text)
+    Dim item, output As Variant
+    ReDim output(match.count - 1)
+    Dim i As Integer
+    i = 0
+    For Each item In match
+        output(i) = item.value
+        i = i + 1
+    Next item
+    multipleRegexExtract = output
+End Function
+Sub getStringInDictionary(arr As Variant, ByRef dict As Scripting.Dictionary)
+    Dim text As Variant
+    For Each text In arr
+    dict.CompareMode = TextCompare
+        If Not dict.Exists(text) Then
+            dict.Add text, 1
+        End If
+    Next text
+End Sub
+Sub splitStringIn2WordPhrase(ByVal dict, originalString As Variant, delimiter)
+    Dim i As Variant
+    Dim text, textHolder As String
+    Dim regex As New VBScript_RegExp_55.RegExp
+    Dim match As Variant
+    regex.Pattern = "\w+\s\w+"
+    regex.Global = True
+
+    text = originalString
+    Set match = regex.Execute(text)
+
+    For Each i In match
+        dict(i.value) = 1
+    Next i
+
+    'shift 1 to the right
+    text = Right(originalString, Len(originalString) - InStr(1, originalString, delimiter))
+    Set match = regex.Execute(text)
+    For Each i In match
+        dict(i.value) = 1
+    Next i
+End Sub
+
+Sub splitStringIn3WordPhrase(ByVal dict, originalString As Variant, delimiter)
+    Dim i As Variant
+    Dim text As String
+    Dim regex As New VBScript_RegExp_55.RegExp
+    Dim match As Variant
+    regex.Pattern = "\w+\s\w+\s\w+"
+    regex.Global = True
+
+    text = originalString
+    Set match = regex.Execute(text)
+
+    For Each i In match
+        dict(i.value) = 1
+    Next i
+
+    'shift 1 to the right
+    text = Right(originalString, Len(originalString) - InStr(1, originalString, delimiter))
+    Set match = regex.Execute(text)
+
+    For Each i In match
+        dict(i.value) = 1
+    Next i
+
+    text = Right(originalString, Len(text) - InStr(1, text, delimiter))
+    Set match = regex.Execute(text)
+
+    For Each i In match
+        dict(i.value) = 1
+    Next i
+End Sub
+
+
+Function regexReplaceRangeArray(text As Variant, ReplaceString As Range, replaceWith As Range) As String
+    'replace regex with something.
+    'inputs need to be a range
+    Dim re As Object
+    Set re = CreateObject("vbscript.regexp")
+    re.Global = True
+    re.IgnoreCase = True
+    re.MultiLine = True
+    Dim i As Integer
+    Dim output As String
+    output = text
+    For i = 1 To ReplaceString.count
+    re.Pattern = ReplaceString.Value2(i, 1)
+    output = re.Replace(output, replaceWith.Value2(i, 1))
+    Next i
+    regexReplaceRangeArray = output
+End Function
+Function preventDivideByZeroError(number1, number2) As Double
+    'when dividing 2 numbers with a tendency to divide by 0.
+    'this save you from using on error in your code.
+    On Error GoTo error
+        preventDivideByZeroError = number1 / number2
+        Exit Function
+error:
+    If Err.number = 11 Then
+        Resume Next
+    Else
+        Err.Message
+    End If
+End Function
+
+
+ Function SubstituteArray(text, SubstituteArray, Replacement) As String
+    Dim i As Variant
+    SubstituteArray = text
+    For Each i In SubstituteArray
+        SubstituteArray = replce(SubstituteArray, i, "", 1, 1, vbTextCompare)
+    Next i
+ End Function
