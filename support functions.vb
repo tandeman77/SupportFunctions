@@ -5,25 +5,25 @@ Public Function countDataRow(sheetName)
     Set ws = Sheets(sheetName)
     Dim i As Integer
     i = 0
-
+    
     Do While ws.Cells(i + 1, 1) <> ""
         i = i + 1
     Loop
-
+    
     countDataRow = i
 End Function
 
 Function getCorrectDate(dateText)
     Dim output As String
     Dim holder As Variant
-
+    
     If VarType(dateText) = 7 Then
         holder = Split(dateText, "/")
         output = holder(1) & "/" & holder(0) & "/" & holder(2)
     ElseIf VarType(dateText) = 8 Then
         output = dateText
     End If
-
+    
     getCorrectDate = output
 End Function
 
@@ -33,7 +33,7 @@ Function TransformArrayForExcelSheet(inputArray As Variant)
     ReDim output(1 To UBound(inputArray) + 1, 1 To 1)
     Dim i As Integer
     i = 0
-
+    
     For i = 0 To UBound(inputArray)
         output(i + 1, 1) = inputArray(i)
     Next i
@@ -47,11 +47,11 @@ Function TransformArrayForExcelSheetWithStartingPoint(inputArray As Variant, sta
     ReDim output(1 To UBound(inputArray) + 1 - startingIndex, 1 To 1)
     Dim i As Integer
     i = 0
-
+    
     For i = startingIndex To UBound(inputArray)
         output(i, 1) = inputArray(i)
     Next i
-
+    
     TransformArrayForExcelSheetWithStartingPoint = output
 
 End Function
@@ -64,7 +64,7 @@ Sub pasteArrayToSheet(outputArray As Variant, Sheet As String, columnNo, startin
     Set ws = Sheets(Sheet)
     Dim startColumn, endColumn As Variant
     startColumn = Number2Letter(columnNo)
-
+    
     endColumn = Number2Letter(columnNo + UBound(outputArray, 2) - 1)
     'columnNo = UBound(outputArray, 2)
     ws.Range(startColumn & startingRow & ":" & endColumn & UBound(outputArray) + startingRow - 1) = outputArray
@@ -75,7 +75,7 @@ Function Number2Letter(number As Variant) As String
     'SOURCE: www.TheSpreadsheetGuru.com/the-code-vault
     'Convert To Column Letter
     Number2Letter = Split(Cells(1, number).Address, "$")(1)
-
+  
 End Function
 
 Sub Letter2Number()
@@ -87,14 +87,15 @@ Dim ColumnLetter As String
 
 'Input Column Letter
   ColumnLetter = "AG"
-
+  
 'Convert To Column Number
    ColumnNumber = Range(ColumnLetter & 1).Column
-
+   
 'Display Result
   MsgBox "Column " & ColumnLetter & " = Column " & ColumnNumber
-
+    
 End Sub
+
 Function IsInArray2d(stringToBeFound, arr As Variant) As Boolean
     Dim i
     For i = LBound(arr) To UBound(arr)
@@ -106,6 +107,7 @@ Function IsInArray2d(stringToBeFound, arr As Variant) As Boolean
     IsInArray2d = False
 
 End Function
+
 Sub removePunctuationFromSelection()
     Dim inputValues As Variant
     Dim output As Variant
@@ -115,14 +117,14 @@ Sub removePunctuationFromSelection()
     i = 0
     Stop
     Dim text As Variant
-
+    
     For i = 1 To UBound(inputValues)
         If UBound(Split(inputValues(i, 1), " ")) > 0 Then
             text = Split(inputValues(i, 1), " ")
             output(i, 1) = removePunctuations(text)
         End If
     Next i
-
+    
 End Sub
 
 Function removePunctuations(text As String) As String
@@ -389,11 +391,11 @@ Function SubstituteArray(text, SubstituteArray, Replacement) As String
         SubstituteArray = replce(SubstituteArray, i, "", 1, 1, vbTextCompare)
     Next i
  End Function
-
+ 
  Function properProper(text As String)
     Dim holder As Variant
     holder = Split(text, " ")
-
+    
     Dim i As Integer
     For i = 0 To UBound(holder)
         If holder(i) = UCase(holder(i)) Then
@@ -402,7 +404,7 @@ Function SubstituteArray(text, SubstituteArray, Replacement) As String
             holder(i) = StrConv(holder(i), 3)
         End If
     Next i
-
+    
     Dim output As String
     output = Join(holder, " ")
     properProper = output
@@ -440,7 +442,7 @@ End Function
 Public Function FindMax1D(arr As Variant) As Double
   Dim myMax As Double
   Dim i As Double
-
+  
   For i = LBound(arr) To UBound(arr)
     If arr(i) > myMax Then
       myMax = i
@@ -519,7 +521,7 @@ Function TrimArray(arrayInput() As Variant, col As Integer) As Variant
         If arrayInput(i, col) <> Empty Then
             count = count + 1
         Else
-            ReDim output(LBound(arrayInput) To count - 1, LBound(arrayInput, 2) To UBound(arrayInput, 2))
+            ReDim output(LBound(arrayInput) To count - 1 + LBound(arrayInput), LBound(arrayInput, 2) To UBound(arrayInput, 2))
             For j = LBound(output) To UBound(output)
                 For k = LBound(output, 2) To UBound(output, 2)
                     output(j, k) = arrayInput(j, k)
@@ -765,14 +767,14 @@ Sub splitStringIn2WordPhrase(ByVal dict, originalString As Variant, delimiter)
     Dim match As Variant
     regex.Pattern = "\w+\s\w+"
     regex.Global = True
-
+    
     text = originalString
     Set match = regex.Execute(text)
-
+    
     For Each i In match
         dict(i.value) = 1
     Next i
-
+    
     'shift 1 to the right
     text = Right(originalString, Len(originalString) - InStr(1, originalString, delimiter))
     Set match = regex.Execute(text)
@@ -788,25 +790,25 @@ Sub splitStringIn3WordPhrase(ByVal dict, originalString As Variant, delimiter)
     Dim match As Variant
     regex.Pattern = "\w+\s\w+\s\w+"
     regex.Global = True
-
+    
     text = originalString
     Set match = regex.Execute(text)
-
+    
     For Each i In match
         dict(i.value) = 1
     Next i
-
+    
     'shift 1 to the right
     text = Right(originalString, Len(originalString) - InStr(1, originalString, delimiter))
     Set match = regex.Execute(text)
-
+    
     For Each i In match
         dict(i.value) = 1
     Next i
-
+    
     text = Right(originalString, Len(text) - InStr(1, text, delimiter))
     Set match = regex.Execute(text)
-
+    
     For Each i In match
         dict(i.value) = 1
     Next i
@@ -844,11 +846,11 @@ error:
     End If
 End Function
 
+Function SubstituteArray(text, SubstituteArray, Replacement) As String
+   Dim i As Variant
+   SubstituteArray = text
+   For Each i In SubstituteArray
+       SubstituteArray = replce(SubstituteArray, i, "", 1, 1, vbTextCompare)
+   Next i
+End Function
 
- Function SubstituteArray(text, SubstituteArray, Replacement) As String
-    Dim i As Variant
-    SubstituteArray = text
-    For Each i In SubstituteArray
-        SubstituteArray = replce(SubstituteArray, i, "", 1, 1, vbTextCompare)
-    Next i
- End Function
