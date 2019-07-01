@@ -391,6 +391,7 @@ Function SubstituteArray(text, SubstituteArray, Replacement) As String
         SubstituteArray = replce(SubstituteArray, i, "", 1, 1, vbTextCompare)
     Next i
  End Function
+
  
  Function properProper(text As String)
     Dim holder As Variant
@@ -846,11 +847,5 @@ error:
     End If
 End Function
 
-Function SubstituteArray(text, SubstituteArray, Replacement) As String
-   Dim i As Variant
-   SubstituteArray = text
-   For Each i In SubstituteArray
-       SubstituteArray = replce(SubstituteArray, i, "", 1, 1, vbTextCompare)
-   Next i
-End Function
+
 
