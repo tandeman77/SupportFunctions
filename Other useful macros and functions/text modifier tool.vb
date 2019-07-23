@@ -17,7 +17,8 @@ Sub modifyTextInARange()
     "input 5 append(front) something to the existing text" & vbNewLine & _
     "input 6 append(back) something to the existing text" & vbNewLine & _
     "input 7 for highlight above/below average value" & vbNewLine & _
-    "input 8 for highlight value higher/lower than a specific number")
+    "input 8 for highlight value higher/lower than a specific number" & vbNewLine & _
+    "input 9 to wrap text in a quote")
 
     Dim inputRange As Variant
     inputRange = Selection
@@ -68,7 +69,7 @@ Sub modifyTextInARange()
         '========================================
         Case 6
             Dim text1 As String
-            text = InputBox("what text to append")
+            text1 = InputBox("what text to append")
             For Each i In inputRange
                 output(j, 1) = i & text1
                 j = j + 1
@@ -228,6 +229,11 @@ Sub modifyTextInARange()
                 j = j + 1
             Next i
             Exit Sub
+        Case 9
+            For Each i In inputRange
+                output(j, 1) = Chr(34) & i & Chr(34)
+                j = j + 1
+            Next i
         '========================================
         Case Else
             MsgBox ("invalid input action")
@@ -238,3 +244,4 @@ Sub modifyTextInARange()
     Selection = output
     MsgBox ("script completed")
 End Sub
+
