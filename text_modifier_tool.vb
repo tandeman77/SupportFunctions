@@ -66,7 +66,7 @@ Sub modifyTextInARange()
         '========================================
         Case 6
             Dim text1 As String
-            text = InputBox("what text to append")
+            text1 = InputBox("what text to append")
             For Each i In inputRange
                 output(j, 1) = i & text1
                 j = j + 1
