@@ -1,0 +1,61 @@
+Option Explicit
+
+ Function SubstituteArray(text, SubstituteArray, Replacement) As String
+    Dim i As Variant
+    SubstituteArray = text
+    For Each i In SubstituteArray
+        SubstituteArray = replce(SubstituteArray, i, "", 1, 1, vbTextCompare)
+    Next i
+ End Function
+
+Function ExtractValueWithDelimiter(ByVal rng As Range, delimiter As String, position As Integer) As String
+    Dim output As Variant
+    output = Split(rng.Value2, delimiter)
+    output = output(position)
+    ExtractValueWithDelimiter = CStr(output)
+End Function
+
+
+Function extractByPosition(rng As Range, position As Integer, delimiter As String) As String
+    'if wnat last position, put 0 as position
+    Dim text As Variant
+    text = rng.value
+    text = Split(text, delimiter)
+    If position = 0 Then
+        extractByPosition = text(UBound(text))
+    Else
+        extractByPosition = text(position - 1)
+    End If
+End Function
+
+Function titleCase(rng As Range) As String
+    Dim sentences As Variant
+    sentences = textToSentences(rng.value)
+    Dim sentence As Variant
+    Dim wordHolder As Variant
+    Dim output As String
+    For Each sentence In sentences
+        wordHolder = Split(StrConv(Trim(sentence), vbLowerCase))
+        wordHolder(0) = StrConv(wordHolder(0), vbProperCase)
+        output = output + " " + Join(wordHolder, " ")
+    Next sentence
+    titleCase = Trim(output)
+    
+End Function
+
+Function textToSentences(text As String) As Variant
+    Dim re As Object
+    Dim matches As Object
+    Set re = CreateObject("vbscript.regexp")
+    re.Pattern = "(\w|\s|\'|\,|\-|\%|\$|\*)+(\.|\?|\!)?"
+    re.IgnoreCase = True
+    re.Global = True
+    Set matches = re.Execute(text)
+    Dim i As Integer
+    Dim output As Variant
+    ReDim output(matches.count - 1)
+    For i = 0 To matches.count - 1
+        output(i) = matches.item(i)
+    Next i
+    textToSentences = output
+End Function
