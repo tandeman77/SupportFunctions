@@ -26,7 +26,27 @@ Function getCorrectDate(dateText)
     
     getCorrectDate = output
 End Function
+Function RegexExtractFixed(ByVal text As String, _
+                      ByVal extract_what As String, _
+                      Optional separator As String = ", ") As String
 
+Dim allMatches As Object
+Dim re As Object
+Set re = CreateObject("vbscript.regexp")
+Dim i As Long, j As Long
+Dim result As String
+
+re.Pattern = extract_what
+Set allMatches = re.Execute(text)
+
+For i = 0 To allMatches.count - 1
+        result = allMatches.item(i).value
+
+Next
+
+RegexExtractFixed = result
+
+End Function
 Function TransformArrayForExcelSheet(inputArray As Variant)
     'get a 1d array ready to be transferred back to a spreadsheet
     Dim output As Variant
@@ -57,7 +77,7 @@ Function TransformArrayForExcelSheetWithStartingPoint(inputArray As Variant, sta
 End Function
 
 
-Sub pasteArrayToSheet(outputArray As Variant, Sheet As String, columnNo, startingRow As Integer)
+Sub pasteArrayToSheet(outputArray As Variant, Sheet As String, columnNo, startingrow As Integer)
     'array needs to be 2 dimensional already
 
     Dim ws As Worksheet
@@ -67,7 +87,7 @@ Sub pasteArrayToSheet(outputArray As Variant, Sheet As String, columnNo, startin
     
     endColumn = Number2Letter(columnNo + UBound(outputArray, 2) - 1)
     'columnNo = UBound(outputArray, 2)
-    ws.Range(startColumn & startingRow & ":" & endColumn & UBound(outputArray) + startingRow - 1) = outputArray
+    ws.Range(startColumn & startingrow & ":" & endColumn & UBound(outputArray) + startingrow - 1) = outputArray
 End Sub
 
 Function Number2Letter(number As Variant) As String
@@ -212,7 +232,7 @@ Function getUniqueValuesFromRange2d(inputArray As Variant) As Variant
     Dim output As Variant
     For i = 1 To UBound(inputArray)
         If Not IsInArray(inputArray(i, 1), output) Then
-            output = Push(inputArray(i), output, 1)
+            output = Push(inputArray(i, 1), output, 1)
         End If
     Next i
     getUniqueValuesFromRange2d = output
@@ -487,7 +507,7 @@ End Function
 Function regexReplace(text, ReplaceString, replaceWith As String) As String
     Dim re As Object
     Set re = CreateObject("vbscript.regexp")
-    re.Pattern = ("\b(" & ReplaceString & ")\b")
+    re.Pattern = ReplaceString
     re.Global = True
     re.IgnoreCase = True
     re.MultiLine = True
@@ -648,18 +668,18 @@ Function arrayLoading(newArr, oldArr As Variant, newCol As Integer, oldCol As In
     arrayLoading = newCol
 End Function
 
-Function LoadMultiArrayTo1dArray(inputarr As Variant, outputArr As Variant, col As Integer, Optional startingIndex As Integer, Optional startingRow As Integer) As Variant
+Function LoadMultiArrayTo1dArray(inputarr As Variant, outputArr As Variant, col As Integer, Optional startingIndex As Integer, Optional startingrow As Integer) As Variant
     'get a column of a multidimensional array into 1d array.
     'use startingrow if you have to skip a header row in the data or something like that.
     ' startingindex is for the output array, e.g. starting the array at index 0 or 1.
     Dim i, j, k As Long
-    If startingRow = Empty Then
+    If startingrow = Empty Then
         k = 0
     End If
     If startingIndex = Empty Then
         j = 0
     End If
-    ReDim outputArr(UBound(inputarr) + startingIndex - startingRow - 1)
+    ReDim outputArr(UBound(inputarr) + startingIndex - startingrow - 1)
     For i = LBound(inputarr) + k To UBound(inputarr)
         outputArr(j) = inputarr(i, col)
         j = j + 1
@@ -847,5 +867,106 @@ error:
     End If
 End Function
 
+Sub deleteContentInARange(sheetName As String, startingrow As Integer, startingColumn As String)
+    Dim rng As String
+    rng = startingColumn & startingrow & ":" & Sheets(sheetName).Range(startingColumn & startingrow).End(xlToRight).End(xlDown).Address
+    Sheets(sheetName).Range(rng).ClearContents
+End Sub
+
+Sub percentageDifference()
+    Dim y2 As Double
+    Dim y1 As Double
+    y2 = CDbl(InputBox("latest number is?"))
+    y1 = CDbl(InputBox("original number is?"))
+    Dim total As String
+    total = Round((y2 - y1) / y1 * 100, 1) & "%"
+    MsgBox ("The percentage difference is " & total)
+End Sub
+
+Function regexExtractInRange(text As Variant, inputRange As Variant) As String
+    Dim output As String
+    Dim words As Variant
+    words = inputRange.Value2
+    Dim i As Integer
+    If inputRange.count = 1 Then
+        output = RegexExtractFixed(text, "\b" & words & "\b")
+        regexExtractInRange = output
+        Exit Function
+    Else
+        For i = 1 To UBound(words)
+            output = RegexExtractFixed(text, "\b" & words(i, 1) & "\b")
+            If output <> "" Then
+                regexExtractInRange = output
+                Exit Function
+            End If
+        Next i
+    End If
+
+End Function
+
+
+Public Function DblTrim(vString As String) As String
+Dim tempString As String
+tempString = vString
+
+Do Until Left(tempString, 1) <> " "
+   tempString = LTrim(tempString)
+Loop
+Do Until Right(tempString, 1) <> " "
+   tempString = RTrim(tempString)
+Loop
+
+DblTrim = tempString
+
+End Function
+
+Public Function SentenceCase(strIn As String) As String
+    Dim objRegex As Object
+    Dim objRegMC As Object
+    Dim objRegM As Object
+    Set objRegex = CreateObject("vbscript.regexp")
+    strIn = DblTrim(strIn)
+    strIn = LCase$(strIn)
+
+    With objRegex
+        .Global = True
+        .IgnoreCase = True
+         .Pattern = "(^|[\.\?\!\r\t]\s?)([a-z])"
+        If .test(strIn) Then
+            Set objRegMC = .Execute(strIn)
+            For Each objRegM In objRegMC
+                Mid$(strIn, objRegM.firstindex + 1, objRegM.Length) = UCase$(objRegM)
+            Next
+        End If
+        SentenceCase = strIn
+    End With
+End Function
+
+Sub getLinkedinDataTable()
+    Dim cols As Variant
+    cols = Array("Start Date (in UTC)", "Account Name", "Campaign Group Name", "Campaign Name", "Total Spent", "Impressions", "Clicks", "Average CPC", "Average CPM", "Conversions", "Cost per Conversion")
+    Dim data As Variant
+    data = Selection
+    
+
+    Dim i, j, k As Integer
+    Dim output As Variant
+    ReDim output(1 To UBound(data), 1 To UBound(cols) + 1)
+    For i = 0 To UBound(cols)
+        For j = 1 To UBound(data, 2)
+            If data(1, j) = cols(i) Then
+                For k = 1 To UBound(data)
+                    output(k, i + 1) = data(k, j)
+                Next k
+            End If
+        Next j
+    Next i
+
+    
+    'empty existing sheeet
+    ActiveSheet.Range("A:fz").ClearContents
+    Call pasteArrayToSheet(output, ActiveSheet.Name, 1, 1)
+    
+End Sub
 
 
